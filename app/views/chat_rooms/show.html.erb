@@ -1,0 +1,29 @@
+My-id : <%= current_user.email %><br/>
+<h3> 이 방에 참여한 사람</h3>
+<div class="joined_user_list">
+<% @chat_room.users.each do |user| %>
+    <p><%= user.email %></p>
+<% end %>
+</div>
+<hr>
+<%= link_to 'Join', join_chat_room_path(@chat_room), method: 'post', remote: true, class: "join_room" %> | 
+<%= link_to 'Edit', edit_chat_room_path(@chat_room) %> |
+<%= link_to 'Back', chat_rooms_path %>
+
+<script>
+$(document).on('ready', function(){
+  function user_joined(data){
+    $('.joined_user_list').append(`<p>${data.email}<p>`);
+  }
+  var pusher = new Pusher('<%= ENV["pusher_key"] %>', {
+    cluster: "<%= ENV["pusher_cluster"]%>",
+    encrypted: true
+  });
+  
+  var channel = pusher.subscribe('chat_room'); //chatroom이라는 채널에 조인이라는 이벤트를 던진 admission 트리거로 간다.
+  channel.bind('join', function(data){  //join이라는 이벤트가 발생했을때 실행해라
+  console.log(data);
+  user_joined(data);
+   });
+})
+</script>

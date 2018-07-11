@@ -1,0 +1,14 @@
+users =[];
+
+<% @chat_room.users.each do |user| %>
+users.push(user);
+<% end %>
+
+$('.join_room').on('click', function(){
+if users.includes(<% current_user %>){
+    $('.join_room').remove();
+    console.log("djd");
+} else {
+    console.log("else");
+}
+}
